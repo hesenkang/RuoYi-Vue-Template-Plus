@@ -5,6 +5,7 @@ Vue.use(Router)
 
 /* Layout */
 import Layout from '@/layout'
+import charge from './modules/charge'
 
 /**
  * Note: 路由配置项
@@ -87,7 +88,8 @@ export const constantRoutes = [
         meta: { title: '个人中心', icon: 'user' }
       }
     ]
-  }
+  },
+  charge
 ]
 
 // 动态路由，基于用户权限动态去加载
