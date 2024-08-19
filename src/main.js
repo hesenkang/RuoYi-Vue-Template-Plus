@@ -1,3 +1,5 @@
+import HE from '@/utils/HE';
+
 import Vue from 'vue'
 
 import Cookies from 'js-cookie'
@@ -13,6 +15,7 @@ import router from './router'
 import directive from './directive' // directive
 import plugins from './plugins' // plugins
 import { download } from '@/utils/request'
+import eventBus from '@/utils/eventBus'
 
 import './assets/icons' // icon
 import './permission' // permission control
@@ -39,6 +42,11 @@ import VueMeta from 'vue-meta'
 import DictData from '@/components/DictData'
 
 // 全局方法挂载
+window.$HE = HE;
+// 原型方法挂载
+Vue.prototype.$HE = HE;
+Vue.prototype.$eventBus = eventBus
+
 Vue.prototype.getDicts = getDicts
 Vue.prototype.getConfigKey = getConfigKey
 Vue.prototype.parseTime = parseTime
