@@ -19,7 +19,7 @@ selenium-debug.log
 *.sln
 *.local
 
-package-lock.json
+# package-lock.json
 yarn.lock
 
 # 项目文档
