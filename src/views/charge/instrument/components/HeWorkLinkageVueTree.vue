@@ -7,7 +7,7 @@
 
 <script>
 import request from "@/utils/request"
-import HeBaseVueTreeVue from './HeBaseVueTree.vue'
+import HeBaseVueTreeVue from '@/components/He/HeForm/components/HeBaseVueTree.vue'
 
 export default {
   props: {

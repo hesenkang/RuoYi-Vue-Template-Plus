@@ -30,6 +30,6 @@ export const ChargeMethod = [
 
 // 计费状态
 export const ChargeStatus = [
-  { label: '启用', value: '0' },
-  { label: '禁用', value: '1' },
+  { label: '禁用', value: '0' },
+  { label: '启用', value: '1' },
 ]

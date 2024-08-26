@@ -1,25 +1,30 @@
 <template>
   <article class="container">
     <section class="app">
-      <el-form ref="form" :model="modal.form" v-bind="{ ...props }">
-        <el-row :gutter="20" v-for="(row, rowIndex) in rowLayouts" :key="`row-${rowIndex}`">
-          <el-col :span="item.span" v-for="(item, colIndex) in row" :key="`col-${rowIndex}-${colIndex}`">
-            <el-form-item
-              :label-width="item.label ? props['label-width'] : '0px'"
-              :prop="item.field"
-              :label="item.label"
-              :rules="item._rule">
-              <component
-                :is="item.type"
-                v-model="modal.form[item.field]"
-                :extendsData="extendsData"
-                :modal="modal"
-                :options="item.options"
-                v-bind="{ ...item.props }">
-              </component>
-            </el-form-item>
-          </el-col>
-        </el-row>
+      <!-- 搜索表单区域 -->
+      <el-form ref="form" :model="form" v-bind="{ ...props }">
+        <!-- 搜索区域 -->
+        <el-form-item
+          v-for="(item, colunmIndex) in formItems"
+          :key="colunmIndex + ':' + item.field"
+          :label-width="item.label ? props['label-width'] : '0px'"
+          :prop="item.field"
+          :label="item.label"
+          :rules="item._rule">
+          <component
+            :is="item.type"
+            v-model="form[item.field]"
+            :extendsData="extendsData"
+            :options="item.options"
+            @change="submitForm"
+            v-bind="{ ...item.props }">
+          </component>
+        </el-form-item>
+        <!-- 提交按钮 -->
+        <el-form-item v-if="hasControl">
+          <el-button type="primary" @click="submitForm">{{ submitText }}</el-button>
+          <el-button @click="resetForm">{{ resetText }}</el-button>
+        </el-form-item>
       </el-form>
     </section>
   </article>
@@ -36,13 +41,13 @@ export default {
     HeBaseVueTree: () => import('./components/HeBaseVueTree.vue'),
   },
   props: {
+    tabUUKey: {
+      type: [String],
+      default: ''
+    },
     extendsData: {
       type: Object,
       default: null,
-    },
-    modal: {
-      type: Object,
-      default: () => ({}),
     },
     // 接口配置
     apiCfg: {
@@ -54,6 +59,21 @@ export default {
       type: Array,
       default: () => [],
     },
+    // 控制表单按钮显示隐藏
+    hasControl: {
+      type: Boolean,
+      default: true
+    },
+    // 搜索按钮配置
+    submitText: {
+      type: String,
+      default: '查询'
+    },
+    // 重置按钮配置
+    resetText: {
+      type: String,
+      default: '重置'
+    },
     props: {
       type: Object,
       default: () => ({}),
@@ -62,6 +82,8 @@ export default {
   data() {
     return {
       vm: this,
+      // 搜索表单对象
+      form: null
     }
   },
   created() {
@@ -74,42 +96,12 @@ export default {
   mounted() {
     // this.resetForm()
   },
-  watch: {
-    'modal.isShow'(val) {
-      if (val && this.isApiConfig) {
-        this.fetchData(this.apiCfg)
-      }
-    }
-  },
+  watch: {},
   computed: {
-    rowLayouts() {
-      const layouts = [];
-      let currentRow = [];
-      let totalSpan = 0;
-
-      this.formItems.forEach((item) => {
-        currentRow.push(item);
-        totalSpan += item.span || 24;
-
-        // 如果当前行的总 span 达到或超过 24，则推入 layouts 并重置
-        if (totalSpan >= 24) {
-          layouts.push(currentRow);
-          currentRow = [];
-          totalSpan = 0;
-        }
-      });
-
-      // 处理最后一行，如果有的话
-      if (currentRow.length > 0) {
-        layouts.push(currentRow);
-      }
-
-      return layouts;
-    },
     // 计算展示的搜索项视图
     formItems() {
       if (!Array.isArray(this.fields)) return [];
-      return this.fields.map(item => computeFormItem(this.vm, item, this.modal.form)).filter(item => item._isShow);
+      return this.fields.map(item => computeFormItem(this.vm, item, this.form)).filter(item => item._isShow);
     },
     isApiConfig() {
       const { config } = this.apiCfg || {}
@@ -137,19 +129,29 @@ export default {
           if (code === 200) {}
       })
     },
-    // 对整个表单进行校验的方法，参数为一个回调函数。该回调函数会在校验结束后被调用，并传入两个参数：是否校验成功和未通过校验的字段。若不传入回调函数，则会返回一个 promise
     validate() {
       return this.$refs['form'].validate()
     },
-    // 移除表单项的校验结果。传入待移除的表单项的 prop 属性或者 prop 组成的数组，如不传则移除整个表单的校验结果
-    clearValidate() {
-      this.$nextTick(() => {
-        this.$refs['form'].clearValidate()
-      })
+    // 提交搜索表单
+    submitForm() {
+      let form = {}
+      for (const key in this.form) {
+        const value = this.form[key]
+        if (value) {
+          form[key] = value
+        }
+      }
+      this.search(form)
+      this.$emit('submit', form);
     },
     // 重置搜索表单
     resetForm() {
-      this.modal.form = this.initForm()
+      this.form = this.initForm()
+      this.search()
+    },
+    // 搜索
+    search(form = {}) {
+      this.$eventBus.emit('onSearchButtonClick' + this.tabUUKey, form)
     },
     // 初始化搜索表单
     initForm() {

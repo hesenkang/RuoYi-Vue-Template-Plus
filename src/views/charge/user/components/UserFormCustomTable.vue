@@ -93,13 +93,13 @@ export default {
     }
   },
   watch: {
-    value(val) {
+    async value(val) {
         let fixData = val
         // 如果存在枚举字段
         if (this.columns.length > 0) {
             const isParse = this.columns.some(item => item.options)
             if (isParse) {
-                fixData = parseData(this.columns, fixData)
+                fixData = await parseData(this.columns, fixData)
             }
         }
         this.tableData = fixData

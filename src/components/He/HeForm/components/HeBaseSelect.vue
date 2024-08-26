@@ -5,7 +5,7 @@
         style="width: 100%;"
         :value="value"
         v-bind="$attrs"
-        @change="$emit('input', $event)">
+        @change="onChange">
       <el-option
         v-for="item in myOptions"
         :key="item.value"
@@ -62,10 +62,15 @@ export default {
     },
     // 监听Value
     listenValue() {
+      if (!this.modal || !this.modal.form) return null
       return this.modal.form[this.listenKey]
     },
   },
   methods: {
+    onChange(val) {
+      this.$emit('input', val)
+      this.$emit('change', val)
+    },
     // 远程获取下拉框数据
     getOptions() {
       const { config, handleFixRequestData, handleFixResponseData } = this.options

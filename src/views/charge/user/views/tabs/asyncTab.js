@@ -5,32 +5,6 @@ const aside = {
   props: {
     width: '320px'
   },
-  // 视图配置
-  viewData: {
-    name: 'sideTree',
-    // Api配置
-    apiCfg: {
-      config: {
-        url: '/paramodelset/getTree',
-        method: 'post',
-        data: {}
-      },
-      // 辅助修复接口返回数据
-      // handleFixData: (data) => {
-      //   return data
-      // },
-    },
-    // 数据 配置
-    data: () => [] || [],
-    // el-tree 配置
-    props: {
-      nodeKey: 'id',
-      defaultProps: {
-        children: "children",
-        label: "devModelName"
-      },
-    }
-  }
 }
 
 // mainHeader配置
@@ -64,20 +38,24 @@ const mainHeader = {
       // 硬编码数据配置
       fields: [
         {
-          label: '项目名称',
-          field: 'name',
+          label: '房间号',
+          field: 'roomName',
           type: 'input',
           props: {},
-          // defaultValue: '',
-          // isRequired: true,
+        },
+        {
+          label: '用户名',
+          field: 'userName',
+          type: 'input',
+          props: {},
         },
       ],
       // 控制表单按钮显示隐藏
-      hasControl: true,
+      // hasControl: true,
       // 搜索按钮配置
-      submitText: '提交',
+      // submitText: '查询',
       // 重置按钮配置
-      resetText: '重置',
+      // resetText: '重置',
       // 组件配置
       props: {
         inline: true
@@ -95,14 +73,22 @@ const editFormFields = () => {
       type: 'input',
       isRequired: true,
       span: 12,
-      props: {},
+      props: {
+        style: {
+          width: '100%'
+        }
+      },
     },
     {
       label: '联系电话',
       field: 'tel',
       type: 'input',
       span: 12,
-      props: {},
+      props: {
+        style: {
+          width: '100%'
+        }
+      },
     },
     {
       label: '联系地址',
@@ -111,7 +97,7 @@ const editFormFields = () => {
       span: 24,
       props: {
         style: {
-          width: '89%'
+          width: '100%'
         }
       },
     },
@@ -164,7 +150,7 @@ const editFormFields = () => {
       span: 24,
       props: {
         style: {
-          width: '89%'
+          width: '100%'
         }
       },
     },
@@ -447,7 +433,7 @@ const main = (tabData) => {
                   // 组件配置
                   props: {
                     inline: false,
-                    'label-width': '120px',
+                    'label-width': '80px',
                   }
                 },
                 form: {}

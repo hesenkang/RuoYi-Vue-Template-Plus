@@ -153,7 +153,11 @@ export default {
 </script>
 
 <style scoped>
+  .container {
+    /* margin-top: -20px; */
+  }
   .box-card {
+    /* padding-top: 20px; */
     color: #606266;
   }
 </style>

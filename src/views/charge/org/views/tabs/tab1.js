@@ -149,7 +149,38 @@ const editFormFields = () => {
       type: 'radio',
       props: {},
       defaultValue: '1',
-      options: 'ChargeType',
+      // options: 'ChargeType',
+      options: {
+        // Api配置
+        config: {
+          url: '/energy/type/list',
+          method: 'get',
+          params: {
+            pageNum: 1,
+            pageSize: 9999,
+          }
+        },
+        // 辅助修复接口请求数据
+        handleFixRequestData: (config, form) => {
+          let newConfig = { ...config }
+          return newConfig
+        },
+        // 辅助修复接口返回数据
+       handleFixResponseData: (res) => {
+        const newRes = { ...res }
+        if (newRes && Array.isArray(newRes.rows)) {
+          newRes.data = newRes.rows.map(item => {
+            return {
+              label: item.energyName,
+              value: item.meterType
+            }
+          })
+        } else {
+          newRes.data = []
+        }
+        return newRes
+       }
+      },
       // isRequired: true,
     },
     {

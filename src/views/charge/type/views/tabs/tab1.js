@@ -1,39 +1,13 @@
 // Aside配置
 const aside = {
   name: '侧栏',
-  isShow: true,
+  isShow: false,
   props: {
     width: '320px'
   },
-  // 视图配置
-  viewData: {
-    name: 'sideTree',
-    // Api配置
-    apiCfg: {
-      config: {
-        url: '/paramodelset/getTree',
-        method: 'post',
-        data: {}
-      },
-      // 辅助修复接口返回数据
-      // handleFixData: (data) => {
-      //   return data
-      // },
-    },
-    // 数据 配置
-    data: () => [] || [],
-    // el-tree 配置
-    props: {
-      nodeKey: 'id',
-      defaultProps: {
-        children: "children",
-        label: "devModelName"
-      },
-    }
-  }
 }
 
-// MainHeader配置
+// mainHeader配置
 const mainHeader = {
   name: '头部',
   isShow: true,
@@ -64,27 +38,30 @@ const mainHeader = {
       // 硬编码数据配置
       fields: [
         {
-          label: '名称',
-          field: 'name',
+          label: '编码',
+          field: 'code',
           type: 'input',
           props: {},
-          // defaultValue: '',
-          // isRequired: true,
         },
-        // {
-        //   label: '报警等级',
-        //   field: 'level',
-        //   type: 'select',
-        //   options: 'ALARM_LEVEL_ENUM',
-        //   props: {}
-        // },
+        {
+          label: '能源名称',
+          field: 'energyName',
+          type: 'input',
+          props: {},
+        },
+        {
+          label: '备注',
+          field: 'remark',
+          type: 'input',
+          props: {},
+        },
       ],
       // 控制表单按钮显示隐藏
-      hasControl: true,
+      // hasControl: true,
       // 搜索按钮配置
-      submitText: '提交',
+      // submitText: '查询',
       // 重置按钮配置
-      resetText: '重置',
+      // resetText: '重置',
       // 组件配置
       props: {
         inline: true
@@ -103,6 +80,12 @@ const formFields = () => {
       // options: 'ChargeType',
       props: {},
       isRequired: true,
+      disabled: (form) => {
+        const newForm = { ...form }
+        const id = newForm.id
+        const isEdit = id ? true : false
+        return isEdit
+      }
     },
     {
       label: '编码',
@@ -128,7 +111,7 @@ const formFields = () => {
     {
       label: '备注',
       field: 'remark',
-      type: 'input',
+      type: 'textarea',
       props: {},
       // isRequired: true,
     },
@@ -315,12 +298,36 @@ const main = {
             align: 'center',
             // options: 'ChargeType'
           },
-          // {
-          //   label: '状态',
-          //   field: 'status',
-          //   align: 'center',
-          //   options: 'ChargeStatus'
-          // },
+          {
+            label: '状态',
+            field: 'status',
+            align: 'center',
+            // options: 'ChargeStatus',
+            components: 'HeBaseSwitch',
+            props: {
+              // Api配置
+              apiCfg: {
+                config: {
+                  url: '/energy/type/changeStatus',
+                  method: 'put',
+                  data: {},
+                },
+                // 辅助修复接口请求数据
+                handleFixRequestData: (config, { row }) => {
+                  const newConfig = { ...config }
+                  newConfig.data = {
+                    id: row.id,
+                    status: row.status === '1' ? '0' : '1',
+                  }
+                  return newConfig
+                },
+                // 辅助修复接口返回数据
+                // handleFixResponseData: (res) => {
+                //   return res
+                // }
+              },
+            }
+          },
           {
             label: '备注',
             field: 'remark',
@@ -335,11 +342,13 @@ const main = {
             label: '创建时间',
             field: 'createTime',
             align: 'center',
+            width: '180px'
           },
           {
             label: '更新时间',
             field: 'updateTime',
             align: 'center',
+            width: '180px',
           },
         ],
         // Api配置

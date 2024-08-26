@@ -5,32 +5,6 @@ const aside = {
   props: {
     width: '320px'
   },
-  // 视图配置
-  viewData: {
-    name: 'sideTree',
-    // Api配置
-    apiCfg: {
-      config: {
-        url: '/paramodelset/getTree',
-        method: 'post',
-        data: {}
-      },
-      // 辅助修复接口返回数据
-      // handleFixData: (data) => {
-      //   return data
-      // },
-    },
-    // 数据 配置
-    data: () => [] || [],
-    // el-tree 配置
-    props: {
-      nodeKey: 'id',
-      defaultProps: {
-        children: "children",
-        label: "devModelName"
-      },
-    }
-  }
 }
 
 // mainHeader配置
@@ -64,20 +38,69 @@ const mainHeader = {
       // 硬编码数据配置
       fields: [
         {
-          label: '项目名称',
+          label: '房间号',
+          field: 'roomName',
+          type: 'input',
+          props: {},
+        },
+        {
+          label: '用户名',
+          field: 'userName',
+          type: 'input',
+          props: {},
+        },
+        {
+          label: '仪表名称',
           field: 'name',
           type: 'input',
           props: {},
-          // defaultValue: '',
-          // isRequired: true,
+        },
+        {
+          label: '仪表类型',
+          field: 'meterType',
+          type: 'select',
+          options: {
+            // Api配置
+            config: {
+              url: '/energy/type/list',
+              method: 'get',
+              params: {
+                pageNum: 1,
+                pageSize: 9999,
+              }
+            },
+            // 辅助修复接口请求数据
+            handleFixRequestData: (config, form) => {
+              let newConfig = { ...config }
+              return newConfig
+            },
+            // 辅助修复接口返回数据
+           handleFixResponseData: (res) => {
+            const newRes = { ...res }
+            if (newRes && Array.isArray(newRes.rows)) {
+              newRes.data = newRes.rows.map(item => {
+                return {
+                  label: item.energyName,
+                  value: item.meterType
+                }
+              })
+            } else {
+              newRes.data = []
+            }
+            return newRes
+           }
+          },
+          props: {
+            multiple: false,
+          },
         },
       ],
       // 控制表单按钮显示隐藏
-      hasControl: true,
+      // hasControl: true,
       // 搜索按钮配置
-      submitText: '提交',
+      // submitText: '查询',
       // 重置按钮配置
-      resetText: '重置',
+      // resetText: '重置',
       // 组件配置
       props: {
         inline: true
@@ -130,7 +153,38 @@ const editFormFields = () => {
       type: 'radio',
       props: {},
       defaultValue: '1',
-      options: 'ChargeType',
+      // options: 'ChargeType',
+      options: {
+        // Api配置
+        config: {
+          url: '/energy/type/list',
+          method: 'get',
+          params: {
+            pageNum: 1,
+            pageSize: 9999,
+          }
+        },
+        // 辅助修复接口请求数据
+        handleFixRequestData: (config, form) => {
+          let newConfig = { ...config }
+          return newConfig
+        },
+        // 辅助修复接口返回数据
+       handleFixResponseData: (res) => {
+        const newRes = { ...res }
+        if (newRes && Array.isArray(newRes.rows)) {
+          newRes.data = newRes.rows.map(item => {
+            return {
+              label: item.energyName,
+              value: item.meterType
+            }
+          })
+        } else {
+          newRes.data = []
+        }
+        return newRes
+       }
+      },
       isRequired: true,
     },
     {
@@ -752,7 +806,8 @@ const main = {
             label: '仪表类型',
             field: 'meterType',
             align: 'center',
-            options: 'ChargeType'
+            options: 'meterType',
+            isAsync: true
           },
           {
             label: '仪表型号',

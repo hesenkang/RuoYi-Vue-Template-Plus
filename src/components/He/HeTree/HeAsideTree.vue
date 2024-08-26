@@ -11,8 +11,8 @@
       <template v-slot:search-options>
         <slot name="search-options-top"></slot>
         <el-checkbox v-model="expand" @change="handleCheckedTreeExpand">展开 / 折叠</el-checkbox>
-        <el-checkbox v-if="props.showCheckbox" v-model="nodeAll" @change="handleCheckedTreeNodeAll">全选 / 清空</el-checkbox>
-        <el-checkbox v-if="props.showCheckbox" v-model="strictly">级联</el-checkbox>
+        <el-checkbox v-if="props.showCheckbox || props.showCheckbox === undefined" v-model="nodeAll" @change="handleCheckedTreeNodeAll">全选 / 清空</el-checkbox>
+        <el-checkbox v-if="props.showCheckbox || props.showCheckbox === undefined" v-model="strictly">级联</el-checkbox>
         <slot name="search-options-bottom"></slot>
       </template>
     </HeSearchTree>
@@ -42,6 +42,14 @@ export default {
     HeSearchTree
   },
   props: {
+    tabUUKey: {
+        type: [String],
+        default: ''
+    },
+    extendsData: {
+        type: Object,
+        default: null
+    },
     apiCfg: {
       type: Object,
       default: () => ({})
@@ -92,7 +100,7 @@ export default {
      */
       onEventBus() {
         // 监听事件-节点被点击
-        this.$eventBus.on('onSearchTree', () => {
+        this.$eventBus.on('onSearchTree' + this.tabUUKey, () => {
             this.initTree()
         }, this)
     },

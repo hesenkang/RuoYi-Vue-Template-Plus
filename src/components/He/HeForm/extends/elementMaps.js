@@ -7,6 +7,7 @@ export default {
     defaultValue: '',
     // 传递给 Element 组件的默认 props
     props: {
+      placeholder: '请输入',
       clearable: true,
       style: {
         width: '220px'
@@ -29,10 +30,11 @@ export default {
     component: 'el-input',
     defaultValue: '',
     props: {
+      placeholder: '请输入',
       type: 'textarea',
       rows: 3,
       style: {
-        width: '220px'
+        width: '440px'
       }
     }
   },

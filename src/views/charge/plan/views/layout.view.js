@@ -37,7 +37,7 @@ const aside = {
 
 const tab1 = {
   name: 'tab1',
-  label: '用户管理',
+  label: '计费方案配置',
   tab: tab1ViewData
 }
 

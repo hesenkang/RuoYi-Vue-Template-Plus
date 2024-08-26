@@ -1,39 +1,13 @@
 // Aside配置
 const aside = {
   name: '侧栏',
-  isShow: true,
+  isShow: false,
   props: {
     width: '320px'
   },
-  // 视图配置
-  viewData: {
-    name: 'sideTree',
-    // Api配置
-    apiCfg: {
-      config: {
-        url: '/paramodelset/getTree',
-        method: 'post',
-        data: {}
-      },
-      // 辅助修复接口返回数据
-      // handleFixData: (data) => {
-      //   return data
-      // },
-    },
-    // 数据 配置
-    data: () => [] || [],
-    // el-tree 配置
-    props: {
-      nodeKey: 'id',
-      defaultProps: {
-        children: "children",
-        label: "devModelName"
-      },
-    }
-  }
 }
 
-// MainHeader配置
+// mainHeader配置
 const mainHeader = {
   name: '头部',
   isShow: true,
@@ -64,27 +38,66 @@ const mainHeader = {
       // 硬编码数据配置
       fields: [
         {
-          label: '名称',
-          field: 'name',
+          label: '方案名称',
+          field: 'programName',
           type: 'input',
           props: {},
-          // defaultValue: '',
-          // isRequired: true,
         },
-        // {
-        //   label: '报警等级',
-        //   field: 'level',
-        //   type: 'select',
-        //   options: 'ALARM_LEVEL_ENUM',
-        //   props: {}
-        // },
+        {
+          label: '仪表类型',
+          field: 'chargeType',
+          type: 'select',
+          options: {
+            // Api配置
+            config: {
+              url: '/energy/type/list',
+              method: 'get',
+              params: {
+                pageNum: 1,
+                pageSize: 9999,
+              }
+            },
+            // 辅助修复接口请求数据
+            handleFixRequestData: (config, form) => {
+              let newConfig = { ...config }
+              return newConfig
+            },
+            // 辅助修复接口返回数据
+           handleFixResponseData: (res) => {
+            const newRes = { ...res }
+            if (newRes && Array.isArray(newRes.rows)) {
+              newRes.data = newRes.rows.map(item => {
+                return {
+                  label: item.energyName,
+                  value: item.meterType
+                }
+              })
+            } else {
+              newRes.data = []
+            }
+            return newRes
+           }
+          },
+          props: {
+            multiple: false,
+          },
+        },
+        {
+          label: '状态',
+          field: 'status',
+          type: 'select',
+          options: 'ChargeStatus',
+          props: {
+            multiple: false,
+          },
+        },
       ],
       // 控制表单按钮显示隐藏
-      hasControl: true,
+      // hasControl: true,
       // 搜索按钮配置
-      submitText: '提交',
+      // submitText: '查询',
       // 重置按钮配置
-      resetText: '重置',
+      // resetText: '重置',
       // 组件配置
       props: {
         inline: true
@@ -136,7 +149,7 @@ const formFields = () => {
     {
       label: '',
       field: 'timePriceList',
-      type: 'HeTimePrice',
+      type: () => import('../../components/HeTimePrice.vue'),
       // 自定义组件属性
       props: {
         startEndTimeRule: [
@@ -183,7 +196,7 @@ const formFields = () => {
     {
       label: '',
       field: 'JFPGTimePriceList',
-      type: 'HeJFPGTimePrice',
+      type: () => import('../../components/HeJFPGTimePrice.vue'),
       props: {},
       defaultValue: [
         {
@@ -607,7 +620,8 @@ const main = {
             label: '计费类型',
             field: 'chargeType',
             align: 'center',
-            options: 'ChargeType'
+            options: 'meterType',
+            isAsync: true
           },
           {
             label: '状态',
@@ -633,9 +647,9 @@ const main = {
                   return newConfig
                 },
                 // 辅助修复接口返回数据
-                handleFixResponseData: (res) => {
-                  return res
-                }
+                // handleFixResponseData: (res) => {
+                //   return res
+                // }
               },
             }
           },

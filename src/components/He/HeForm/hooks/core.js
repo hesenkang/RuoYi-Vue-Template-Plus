@@ -47,6 +47,11 @@ export function computeFormItem(vm, config, form) {
   // 处理校验
   item._rule = getRule(item)
 
+  // 处理禁用
+  if (item.disabled) {
+    item.props.disabled = isFunction(item.disabled) ? !!item.disabled(form) : typeof item.disabled === 'boolean' ? item.disabled : false
+  }
+
   // 设置内容宽度
   const contentWidth = item.contentWidth
   if (contentWidth) {

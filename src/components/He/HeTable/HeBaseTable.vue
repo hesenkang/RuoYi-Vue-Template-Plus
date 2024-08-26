@@ -2,7 +2,7 @@
   <section class="container">
       <el-table 
         ref="table" 
-        :height="$attrs.height ? $attrs.height : '60vh'" 
+        :height="$attrs.height ? $attrs.height : '100%'" 
         v-show="showColumnViews.length > 0" 
         :data="tableData" 
         :border="true"

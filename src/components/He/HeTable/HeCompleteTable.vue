@@ -5,9 +5,14 @@
             <el-button v-for="item in buttonTopsItems" :key="item.field" v-bind="{ ...item.props }" @click="handelTopButtonClick(item)">{{ item.label }}</el-button>
         </section>
         <HeBaseTable 
+            :style="{ height: `calc(100% - ${buttonTopsItems.length ? '45.25px' : '0px'} - ${pagination.isShow ? ' 42px' : '0px'} - 7px)`}"
             :columns="columns" 
             :tableData="tableDataCpt" 
             v-bind="{ ...props }"
+            v-loading="loading"
+            element-loading-text="加载中"
+            element-loading-spinner="el-icon-loading"
+            element-loading-background="rgba(0, 0, 0, 0.8)"
             @select="handleSelect"
             @select-all="handleSelectAll"
             @selection-change="handleSelectionChange"
@@ -82,9 +87,9 @@ export default {
         HeBaseSwitch: () => import('../HeForm/components/HeBaseSwitch.vue'),
     },
     props: {
-        tabIndex: {
-            type: [Number, String],
-            default: 0
+        tabUUKey: {
+            type: [String],
+            default: ''
         },
         extendsData: {
             type: Object,
@@ -124,6 +129,8 @@ export default {
     },
     data () {
         return {
+            // 表格加载中
+            loading: true,
             // 表格按钮
             buttons: this.buttonsCfg.data || [],
             // 表格列
@@ -206,8 +213,13 @@ export default {
          */
         onEventBus() {
             // 监听事件-节点被点击
-            this.$eventBus.on('onNodeClick' + this.tabIndex, ({ form }) => {
+            this.$eventBus.on('onNodeClick' + this.tabUUKey, ({ form }) => {
                 this.treeForm = form
+                this.getTableData()
+            }, this)
+            // 监听事件-搜索按钮被点击
+            this.$eventBus.on('onSearchButtonClick' + this.tabUUKey, (form = {}) => {
+                this.searchForm = form
                 this.getTableData()
             }, this)
         },
@@ -254,6 +266,7 @@ export default {
                     });
                     this.modal.isShow = false
                     this.getTableData()
+                    this.$eventBus.emit('onSearchTree' + this.tabUUKey)
                 }
             })
         },
@@ -300,7 +313,7 @@ export default {
                             message: '删除成功!'
                         });
                         this.getTableData()
-                        this.$eventBus.emit('onSearchTree')
+                        this.$eventBus.emit('onSearchTree' + this.tabUUKey)
                     }
                 })
             }).catch(() => {
@@ -450,9 +463,9 @@ export default {
                 if (handleFixRequestData && this.$HE.isFunction(handleFixRequestData)) {
                     newConfig = handleFixRequestData(newConfig)
                 }
-                
+                this.loading = true
                 // 请求数据
-                request(newConfig).then(data => {
+                request(newConfig).then(async data => {
                     const { code, total } = data
                     let fixData = fixApiData(data)
                     // 如果存在辅助修复接口请求数据函数
@@ -464,12 +477,12 @@ export default {
                     if (this.columns.length > 0) {
                         const isParse = this.columns.some(item => item.options)
                         if (isParse) {
-                            fixData = parseData(this.columns, fixData)
+                            fixData = await parseData(this.columns, fixData)
                         }
                     }
                     this.tableData = fixData
                     this.total = total
-                })
+                }).finally(() => this.loading = false)
             // 如果是硬编码数据
             } else if (this.isTableData) {
                 this.tableData = this.dataCfg.data
@@ -521,6 +534,10 @@ export default {
     height: 100%;
 }
 .buttons_top {
+    /* height: 38px; */
     margin-bottom: 10px;
 }
+/* .pagination {
+    height: 35px;
+} */
 </style>

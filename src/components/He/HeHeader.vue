@@ -1,13 +1,13 @@
 <template>
   <div class="container">
     <div class="app">
-      <component v-if="asyncComponent" :is="asyncComponent" v-bind="{ ...viewData.componentCfg }" v-on="$listeners"></component>
+      <component v-if="asyncComponent" :is="asyncComponent" :extendsData="extendsData" :tabUUKey="tabUUKey" v-bind="{ ...viewData.componentCfg }" v-on="$listeners"></component>
     </div>
   </div>
 </template>
 
 <script>
-const HeBaseForm = () => import('@/components/He/HeForm/HeBaseForm.vue')
+const HeSearchForm = () => import('@/components/He/HeForm/HeSearchForm.vue')
 
 export default {
   props: {
@@ -24,10 +24,16 @@ export default {
   },
   computed: {
     asyncComponent() {
-      return this.viewData?.asyncComponent || HeBaseForm
+      return this.viewData?.asyncComponent || HeSearchForm
     },
     viewData() {
       return this.config?.viewData
+    },
+    extendsData() {
+      return this.config?.extendsData
+    },
+    tabUUKey() {
+      return this.config?.tabUUKey
     }
   },
 }

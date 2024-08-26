@@ -1,12 +1,13 @@
 <template>
   <div class="container">
     <div class="app">
-      <component v-if="asyncComponent" :is="asyncComponent" :extendsData="extendsData" :tabIndex="tabIndex" v-bind="{ ...viewData.componentCfg }" v-on="$listeners"></component>
+      <component v-if="asyncComponent" :is="asyncComponent" :extendsData="extendsData" :tabUUKey="tabUUKey" v-bind="{ ...viewData.componentCfg }" v-on="$listeners"></component>
     </div>
   </div>
 </template>
 
 <script>
+
 const HeCompleteTable = () => import('@/components/He/HeTable/HeCompleteTable.vue')
 
 export default {
@@ -32,8 +33,8 @@ export default {
     extendsData() {
       return this.config?.extendsData
     },
-    tabIndex() {
-      return this.config?.tabIndex
+    tabUUKey() {
+      return this.config?.tabUUKey
     }
   },
 }

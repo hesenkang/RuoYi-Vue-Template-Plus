@@ -19,8 +19,9 @@ export default {
 
       if (newVal === false) {
         this.$refs.baseForm && this.$refs.baseForm.resetForm();
-        // this.modal.form = {};
       }
+
+      this.$refs.baseForm && this.$refs.baseForm.clearValidate();
     }
   },
   computed: {

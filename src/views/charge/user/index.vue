@@ -25,7 +25,14 @@ export default {
   computed: {
     acIndex() {
       return this.layoutView.activeIndex
-    }
+    },
+    // 标签唯一标识 acIndex:tab.name:tab.label
+    tabUUKey() {
+      const index = this.acIndex || 0
+      const name = this.layoutView.tabs[this.acIndex]?.name || ''
+      const label = this.layoutView.tabs[this.acIndex]?.label || ''
+      return ':' + index + ':' + name + ':' + label
+    },
   },
   methods: {
     nodeClick(data, node, nodeVm) {
@@ -45,7 +52,7 @@ export default {
         form = {}
       }
       
-      this.$eventBus.emit('onNodeClick' + this.acIndex, { form, data, node })
+      this.$eventBus.emit('onNodeClick' + this.tabUUKey, { form, data, node })
     },
     asyncInitTabs() {
       const config = {
