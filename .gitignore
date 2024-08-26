@@ -21,3 +21,8 @@ selenium-debug.log
 
 package-lock.json
 yarn.lock
+
+# 项目文档
+docs/.vitepress/dist
+docs/.vitepress/cache
+docs/.vitepress/docs
